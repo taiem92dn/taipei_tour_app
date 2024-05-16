@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="com.taingdev.taipeitourapp.model.Attraction" />
+
+        <variable
+            name="attraction"
+            type="com.taingdev.taipeitourapp.model.Attraction" />
+
+    </data>
+
+    <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_extra_small"
+        app:contentPadding="0dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/iv_attraction"
+                android:layout_width="130dp"
+                android:layout_height="140dp"
+                android:scaleType="centerCrop"
+                attractionImage="@{attraction}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:src="@tools:sample/backgrounds/scenic" />
+
+            <TextView
+                android:id="@+id/tv_attraction_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_small"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@{attraction.name}"
+                android:textAppearance="@style/TextViewHeadline6"
+                android:layout_marginTop="@dimen/margin_small"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintStart_toEndOf="@id/iv_attraction"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                android:id="@+id/tv_attraction_introduction"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@{attraction.introduction}"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintStart_toStartOf="@id/tv_attraction_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_attraction_name"
+                tools:text="@tools:sample/lorem/random" />
+
+            <TextView
+                android:id="@+id/tv_attraction_open"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_small"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:text="@{attraction.openTime}"
+                android:layout_marginBottom="@dimen/margin_small"
+                app:layout_constraintEnd_toEndOf="@id/guideline_end"
+                app:layout_constraintStart_toStartOf="@id/tv_attraction_name"
+                app:layout_constraintTop_toBottomOf="@id/tv_attraction_introduction"
+                app:layout_constraintBottom_toBottomOf="parent"
+                tools:text="@tools:sample/lorem/random" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_end"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_end="@dimen/margin_small"
+
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.google.android.material.card.MaterialCardView>
+</layout>

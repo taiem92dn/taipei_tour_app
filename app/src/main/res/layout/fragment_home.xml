@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+
+    <data>
+
+        <import type="androidx.lifecycle.LiveData" />
+
+        <import type="android.view.View" />
+
+        <variable
+            name="errorMessage"
+            type="LiveData&lt;String>" />
+
+        <variable
+            name="showError"
+            type="LiveData&lt;Boolean>" />
+
+        <variable
+            name="showLoading"
+            type="LiveData&lt;Boolean>" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".ui.home.HomeFragment">
+
+        <com.taingdev.taipeitourapp.ui.widget.TopAppBarLayout
+            android:id="@+id/appBarLayout"
+            style="?appBarLayoutStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                />
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@android:id/empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:text="@string/no_results"
+            android:textAppearance="@style/TextViewHeadline6"
+            android:visibility="gone"
+            tools:visibility="visible" />
+
+        <include
+            android:id="@+id/layout_progressBar"
+            errorMessage="@{errorMessage}"
+            layout="@layout/layout_progress_bar"
+            showError="@{showError}"
+            showLoading="@{showLoading}"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

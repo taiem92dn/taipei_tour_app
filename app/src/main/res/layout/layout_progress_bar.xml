@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout>
+    <data>
+        <import type="androidx.lifecycle.LiveData" />
+        <import type="android.view.View"/>
+
+        <variable
+            name="errorMessage"
+            type="LiveData&lt;String>" />
+
+        <variable
+            name="showError"
+            type="LiveData&lt;Boolean>" />
+
+        <variable
+            name="showLoading"
+            type="LiveData&lt;Boolean>" />
+    </data>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="@{showLoading ? View.VISIBLE : View.GONE}"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:visibility="gone"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/margin_large"
+        android:visibility="@{showError ? View.VISIBLE : View.GONE}"
+        android:gravity="center"
+        android:orientation="vertical"
+        tools:visibility="visible">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@{errorMessage}"
+            android:textAppearance="@style/TextViewSubtitle1"
+            tools:text="@string/no_internet" />
+
+        <Button
+            android:id="@+id/btRetry"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/margin_small"
+            android:padding="@dimen/margin_normal"
+            android:text="@string/retry_button" />
+    </LinearLayout>
+</FrameLayout>
+
+</layout>

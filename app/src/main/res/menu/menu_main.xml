@@ -3,8 +3,43 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.taingdev.taipeitourapp.ui.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_language"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
-        app:showAsAction="never" />
+        android:title="@string/action_language"
+        android:icon="@drawable/ic_language_24"
+        app:showAsAction="always">
+        <menu>
+            <group android:checkableBehavior="single">
+                <item
+                    android:id="@+id/action_lang_zh_tw"
+                    android:title="@string/lang_zh_tw" />"
+                <item
+                    android:id="@+id/action_lang_zh_cn"
+                    android:title="@string/lang_zh_cn" />"
+                <item
+                    android:id="@+id/action_lang_en"
+                    android:title="@string/lang_en" />"
+                <item
+                    android:id="@+id/action_lang_ja"
+                    android:title="@string/lang_ja" />"
+                <item
+                    android:id="@+id/action_lang_ko"
+                    android:title="@string/lang_ko" />"
+                <item
+                    android:id="@+id/action_lang_es"
+                    android:title="@string/lang_es" />"
+                <item
+                    android:id="@+id/action_lang_id"
+                    android:title="@string/lang_id" />"
+                <item
+                    android:id="@+id/action_lang_th"
+                    android:title="@string/lang_th" />"
+                <item
+                    android:id="@+id/action_lang_vi"
+                    android:title="@string/lang_vi" />"
+
+            </group>
+
+        </menu>
+    </item>
 </menu>

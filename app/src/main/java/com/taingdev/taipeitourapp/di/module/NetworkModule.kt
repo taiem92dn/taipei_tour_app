@@ -6,6 +6,8 @@ import com.taingdev.taipeitourapp.data.RemoteAttractionDataSource
 import com.taingdev.taipeitourapp.network.AttractionService
 import com.taingdev.taipeitourapp.util.Utils
 import com.taingdev.taipeitourapp.network.INetworkCheckService
+import com.taingdev.taipeitourapp.util.LANG_PATH
+import com.taingdev.taipeitourapp.util.PrefUtil
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -16,6 +18,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
+
 
 
 @Module
@@ -30,20 +33,23 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideOkHttpClient(prefUtil: PrefUtil): OkHttpClient {
         val interceptor = HttpLoggingInterceptor()
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
 
-        val addQueryTokenInterceptor = Interceptor { chain ->
+        val addLangPathInterceptor = Interceptor { chain ->
             val original = chain.request()
+            val indexOfLangPath = original.url.pathSegments.indexOf(LANG_PATH)
+
             val url = original.url.newBuilder()
-//                .addQueryParameter("appid", apiKey)
+                .setPathSegment(indexOfLangPath, prefUtil.getLanguage())
                 .build()
             val request = original.newBuilder().url(url).build()
 
             chain.proceed(request)
         }
         return OkHttpClient.Builder()
+            .addInterceptor(addLangPathInterceptor)
             .addInterceptor(interceptor)
             .build()
     }
@@ -52,8 +58,8 @@ class NetworkModule {
     @Singleton
     fun provideRetrofit(client: OkHttpClient): Retrofit {
         return Retrofit.Builder()
-//            .baseUrl("https://www.travel.taipei/open-api/{lang}/")
-            .baseUrl("https://www.travel.taipei/open-api/en/")
+            .baseUrl("https://www.travel.taipei/open-api/$LANG_PATH/")
+//            .baseUrl("https://www.travel.taipei/open-api/en/")
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
             .build()

@@ -12,9 +12,21 @@
         tools:layout="@layout/fragment_home">
     </fragment>
     <fragment
-        android:id="@+id/SecondFragment"
-        android:name="com.taingdev.taipeitourapp.ui.SecondFragment"
-        android:label="@string/second_fragment_label"
-        tools:layout="@layout/fragment_second">
+        android:id="@+id/DetailFragment"
+        android:name="com.taingdev.taipeitourapp.ui.detail.DetailFragment"
+        android:label="@string/detail_fragment_label"
+        tools:layout="@layout/fragment_detail">
+        <argument
+            android:name="extra_attraction"
+            app:argType="com.taingdev.taipeitourapp.model.Attraction" />
+    </fragment>
+    <fragment
+        android:id="@+id/WebViewFragment"
+        android:name="com.taingdev.taipeitourapp.ui.webview.WebViewFragment"
+        android:label="WebView Fragment"
+        tools:layout="@layout/fragment_webview">
+        <argument
+            android:name="extra_url"
+            app:argType="string" />
     </fragment>
 </navigation>

@@ -3,12 +3,24 @@ package com.taingdev.taipeitourapp.ui.home
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.SubMenu
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
 import com.taingdev.taipeitourapp.R
@@ -16,13 +28,17 @@ import com.taingdev.taipeitourapp.databinding.FragmentHomeBinding
 import com.taingdev.taipeitourapp.model.Attraction
 import com.taingdev.taipeitourapp.ui.adapter.AttractionAdapter
 import com.taingdev.taipeitourapp.ui.adapter.ItemsLoadStateAdapter
+import com.taingdev.taipeitourapp.util.EXTRA_ATTRACTION
+import com.taingdev.taipeitourapp.util.PrefUtil
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import javax.inject.Inject
+
 
 @AndroidEntryPoint
-class HomeFragment : Fragment() {
+class HomeFragment : Fragment(), MenuProvider {
 
     private var _binding: FragmentHomeBinding? = null
 
@@ -33,6 +49,9 @@ class HomeFragment : Fragment() {
     private val viewModel: AttractionListViewModel by viewModels()
 
     private var adapter: AttractionAdapter? = null
+
+    @Inject
+    lateinit var prefUtil: PrefUtil
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -45,12 +64,13 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        (requireActivity() as AppCompatActivity).setSupportActionBar(binding.appBarLayout.toolbar)
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.STARTED)
 
         initAdapter()
         bindEvents()
         bindData()
-
-        refreshData()
 
         binding.appBarLayout.title = getString(R.string.app_name)
     }
@@ -83,6 +103,11 @@ class HomeFragment : Fragment() {
     }
 
     private fun navigateToDetail(attraction: Attraction) {
+        findNavController().navigate(
+            R.id.DetailFragment,
+            bundleOf(EXTRA_ATTRACTION to attraction),
+            null
+        )
     }
 
     private fun initAdapter() {
@@ -102,11 +127,15 @@ class HomeFragment : Fragment() {
         pagingData: Flow<PagingData<Attraction>>,
     ) {
         lifecycleScope.launch {
-            pagingData.collectLatest(attractionAdapter::submitData)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.CREATED) {
+                pagingData.collectLatest(attractionAdapter::submitData)
+            }
         }
 
         lifecycleScope.launch {
-            attractionAdapter.loadStateFlow.collect { loadState ->
+            attractionAdapter.loadStateFlow
+                .flowWithLifecycle(viewLifecycleOwner.lifecycle, Lifecycle.State.CREATED)
+                .collect { loadState ->
                 val isListEmpty =
                     loadState.refresh is LoadState.NotLoading && attractionAdapter.itemCount == 0
                 // show empty list
@@ -141,13 +170,14 @@ class HomeFragment : Fragment() {
                 errorState?.let {
                     Toast.makeText(
                         requireContext(),
-                        "\uD83D\uDE28 Wooops ${it.error}",
+                        "\uD83D\uDE28 Wooops ${it.error.message}",
                         Toast.LENGTH_LONG
                     ).show()
                 }
             }
         }
     }
+
 
 
     private fun showLoading() {
@@ -161,5 +191,62 @@ class HomeFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+        menuInflater.inflate(R.menu.menu_main, menu)
+
+        val langItem: MenuItem = menu.findItem(R.id.action_language)
+        setUpLangMenu(langItem.subMenu)
+    }
+
+    private fun setUpLangMenu(subMenu: SubMenu?) {
+        when (prefUtil.getLanguage()) {
+            "zh-tw" -> subMenu?.findItem(R.id.action_lang_zh_tw)?.isChecked = true
+            "zh-cn" -> subMenu?.findItem(R.id.action_lang_zh_cn)?.isChecked = true
+            "en" -> subMenu?.findItem(R.id.action_lang_en)?.isChecked = true
+            "ja" -> subMenu?.findItem(R.id.action_lang_ja)?.isChecked = true
+            "ko" -> subMenu?.findItem(R.id.action_lang_ko)?.isChecked = true
+            "es" -> subMenu?.findItem(R.id.action_lang_es)?.isChecked = true
+            "id" -> subMenu?.findItem(R.id.action_lang_id)?.isChecked = true
+            "th" -> subMenu?.findItem(R.id.action_lang_th)?.isChecked = true
+            "vi" -> subMenu?.findItem(R.id.action_lang_vi)?.isChecked = true
+        }
+    }
+
+    override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+        if (handleLanguageMenuItem(menuItem)) {
+            return true
+        }
+
+        return false
+    }
+
+    private fun handleLanguageMenuItem(menuItem: MenuItem): Boolean {
+        val language = when (menuItem.itemId) {
+            R.id.action_lang_zh_tw -> "zh-tw"
+            R.id.action_lang_zh_cn -> "zh-cn"
+            R.id.action_lang_en -> "en"
+            R.id.action_lang_ja -> "ja"
+            R.id.action_lang_ko -> "ko"
+            R.id.action_lang_es -> "es"
+            R.id.action_lang_id -> "id"
+            R.id.action_lang_th -> "th"
+            R.id.action_lang_vi -> "vi"
+            else -> null
+        }
+
+        if (language != null) {
+            menuItem.isChecked = true
+            setAndSaveLanguage(language)
+            return true
+        }
+
+        return false
+    }
+
+    private fun setAndSaveLanguage(language: String) {
+        prefUtil.saveLanguage(language)
+        refreshData()
     }
 }

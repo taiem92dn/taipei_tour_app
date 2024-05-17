@@ -1,7 +1,6 @@
 package com.taingdev.taipeitourapp.ui.home
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -15,6 +14,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.flowWithLifecycle
@@ -23,6 +23,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.paging.LoadState
 import androidx.paging.PagingData
+import com.google.android.material.transition.MaterialFadeThrough
 import com.taingdev.taipeitourapp.R
 import com.taingdev.taipeitourapp.databinding.FragmentHomeBinding
 import com.taingdev.taipeitourapp.model.Attraction
@@ -67,6 +68,9 @@ class HomeFragment : Fragment(), MenuProvider {
         (requireActivity() as AppCompatActivity).setSupportActionBar(binding.appBarLayout.toolbar)
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.STARTED)
+
+        enterTransition = MaterialFadeThrough().addTarget(binding.rvList)
+        reenterTransition = MaterialFadeThrough().addTarget(binding.rvList)
 
         initAdapter()
         bindEvents()

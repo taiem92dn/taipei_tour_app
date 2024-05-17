@@ -57,6 +57,7 @@ dependencies {
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)
     implementation(libs.androidx.paging)
+    implementation(libs.me.relex.circleindicator)
 
     implementation(libs.glide)
     implementation(libs.glide.ksp)

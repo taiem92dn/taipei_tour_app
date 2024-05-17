@@ -3,7 +3,9 @@ package com.taingdev.taipeitourapp.ui.home
 import android.content.SharedPreferences
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.taingdev.taipeitourapp.model.Attraction
 import com.taingdev.taipeitourapp.repository.AttractionRepository
 import com.taingdev.taipeitourapp.util.DEFAULT_LANG
@@ -16,7 +18,6 @@ import javax.inject.Inject
 @HiltViewModel
 class AttractionListViewModel @Inject constructor(
     private val attractionRepository: AttractionRepository,
-    private val sharedPreferences: SharedPreferences
 ) : ViewModel() {
 
     val errorMessage = MutableLiveData<String>()
@@ -25,7 +26,7 @@ class AttractionListViewModel @Inject constructor(
     val pagingDataFlow: Flow<PagingData<Attraction>>
 
     init {
-        pagingDataFlow = getAttractionList()
+        pagingDataFlow = getAttractionList().cachedIn(viewModelScope)
     }
 
     fun setShowError(message: String) {

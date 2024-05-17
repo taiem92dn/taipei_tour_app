@@ -25,6 +25,16 @@
   - Show detail information of Attraction
   ### Webview screen
   - Allow to load official site of Attraction
+  ### Suported Languages
+  - Traditional Chinese (zh-tw) 
+  - Simplified Chinese (zh-cn)
+  - English (en)
+  - Japanese (ja)
+  - Korean (ko)
+  - Spanish (es)
+  - Indonesian (id)
+  - Thai (th)
+  - Vietnamese (vi)
   
  ## Requirements to build the app.
   - Android Studio Jellyfish | 2023.3.1
